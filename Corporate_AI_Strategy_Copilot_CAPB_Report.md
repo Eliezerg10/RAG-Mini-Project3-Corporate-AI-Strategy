@@ -259,7 +259,7 @@ data_constraints:
 
 **Overview**
 
-> User Question → Mode Router → Query Expansion → Hybrid Retrieval → (Optional Reranker) → LLM Synthesis → Structured Strategy Memo
+> User Question → Mode Router → Query Expansion → Hybrid Retrieval →  Reranker → LLM Synthesis → Structured Strategy Memo
 
 **Detailed steps**
 
@@ -292,7 +292,7 @@ data_constraints:
      - Union, then score-normalized and sorted.  
      - Or weighted combination of sparse and dense scores.
 
-5. **(Optional) Reranking**
+5. **Reranking**
    - Rerank up to top-`k` retrieved chunks using a cross-encoder or reranker model.  
    - Prioritize:
      - Direct semantic relevance to question and context.  
@@ -324,7 +324,7 @@ pipeline:
 
 ---
 
-### 3.2 Tools & Components (Proposed)
+### 3.2 Tools & Components
 
 | Component    | Proposed Choice                   | Rationale                                           |
 |-------------|------------------------------------|-----------------------------------------------------|
@@ -357,34 +357,6 @@ architecture:
     - "strategy"
     - "ai_strategy"
 ```
-
----
-
-### 3.3 Design Rationale
-
-- **Why RAG instead of pure LLM?**  
-  Pure LLM responses to strategy questions often hallucinate frameworks, misquote case studies, or invent best practices. RAG **anchors** answers in real documents and improves transparency via citations.
-
-- **Why hybrid retrieval?**  
-  Strategy documents contain both:
-  - **Generic jargon** (“profitable growth”, “portfolio optimization”), and  
-  - **Specific phrases** (names of frameworks, industry terms).  
-
-  Hybrid retrieval balances:
-  - Keyword matching for exact framework names and acronyms.  
-  - Embeddings for semantic similarity to the business situation.
-
-- **Why two modes on one corpus?**  
-  Using a single corpus with `mode_relevance` metadata:
-  - Reuses infrastructure.  
-  - Still allows specialized prompts and retrieval for AI vs general strategy.  
-
-- **Why reranking?**  
-  Many chunks will be only loosely relevant. A reranker:
-  - Prioritizes chunks that speak directly to the query’s context (e.g., “mid-size SaaS in North America”).  
-  - Helps avoid dilution by tangential but buzzword-heavy content.
-
----
 
 ## 4. Component Alternatives (Mini-Bakeoff)
 
@@ -426,26 +398,6 @@ component_selection:
     selected: "GPT-4.1"
     reason: "Better reasoning for multi-step strategy and AI roadmaps"
 ```
-
----
-
-### 4.2 Planned Mini-Bakeoff Procedure
-
-If time allows, a lightweight bakeoff will compare:
-
-1. **Embeddings**
-   - OpenAI `text-embedding-3-large` vs a smaller local model.  
-   - Evaluation: for ~10 strategy questions, compare which embedding model retrieves more **semantically relevant** chunks (manual judgment).
-
-2. **Retrieval Strategy**
-   - Dense-only vs BM25-only vs hybrid.  
-   - Metric: **human-judged relevance** of top-5 retrieved chunks for a subset of questions.
-
-**Expected outcome**
-
-- Hybrid retrieval with high-quality embeddings will outperform single-method baselines on:
-  - Relevance of retrieved chunks.  
-  - Overall quality of the synthesized strategy memos.
 
 ---
 
@@ -583,30 +535,39 @@ improvements:
 
 ## 7. References
 
-> **Note:** These are example references to illustrate the type of sources that would be used. In the actual project, each reference should be replaced with concrete URLs / DOIs and properly formatted citations.
+> **Note:** These are example references to illustrate the type of sources that would be used. In the actual project, each reference will be replaced with concrete URLs / DOIs and properly formatted citations.
 
 1. **Retrieval-Augmented Generation**
    - Lewis, P. et al. *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*.
+   ---https://arxiv.org/abs/2005.11401
 
 2. **Strategy Frameworks & Thought Leadership**
-   - McKinsey & Company. *The New Rules of Growth*.  
-   - Boston Consulting Group (BCG). *The Art of Strategy*.  
+   - McKinsey & Company. *The Ten Rules of Growth*.  
+   ---https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/the-ten-rules-of-growth#/
+   - Boston Consulting Group (BCG). *The Growth Share Matrix*.  
+   ---https://www.bcg.com/about/overview/our-history/growth-share-matrix
    - Harvard Business Review. Selected articles on growth, market entry, and corporate strategy.
+   ---Porter, Michael E. "The Five Competitive Forces That Shape Strategy." Special Issue on HBS Centennial. Harvard Business Review 86, no. 1 (January 2008): 78–93.
 
 3. **AI Strategy & Transformation**
-   - McKinsey & Company. *The State of AI in 2024*.  
-   - BCG. *How to Build an AI-Powered Organization*.  
-   - Various responsible AI and AI governance guidelines from major vendors and institutions.
+   - McKinsey & Company. *The State of AI in 2025*.  
+   ---https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai
+   - BCG. *How to prepare for an AI first future*.  
+   ---https://www.bcg.com/publications/2025/how-companies-can-prepare-for-ai-first-future
+   
 
 4. **RAG & Tooling**
    - LangChain Documentation — Retrieval and VectorStore modules.  
-   - FAISS Documentation — Facebook AI Similarity Search (vector index).
+   ---https://docs.langchain.com/oss/javascript/langchain/retrieval
+   ---https://docs.langchain.com/oss/python/integrations/vectorstores
+   - FAISS Documentation 
+   ---https://docs.langchain.com/oss/python/integrations/vectorstores/faiss
 
 ```yaml
 references:
   - "Lewis, P. et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks."
-  - "McKinsey & Company. The New Rules of Growth (report)."
-  - "BCG. How to Build an AI-Powered Organization (whitepaper)."
-  - "Harvard Business Review. Various articles on corporate and AI strategy."
+  - " McKinsey & Company. The Ten Rules of Growth. "
+  - "Boston Consulting Group (BCG). The Growth Share Matrix."
+  - "Porter, Michael E. "The Five Competitive Forces That Shape Strategy." Special Issue on HBS Centennial. Harvard Business Review 86, no. 1 (January 2008): 78–93."
   - "LangChain and FAISS documentation for RAG implementation details."
 ```
