@@ -1,6 +1,6 @@
 ---
 title: "Mini-Project #3 — Corporate & AI Strategy Copilot (RAG)"
-author: "Pedro Perez"
+author: "Eliezer Gonzalez"
 course: "IPHS 391"
 date: "November 16, 2025"
 ---
@@ -8,7 +8,7 @@ date: "November 16, 2025"
 # Mini-Project #3 — Corporate & AI Strategy Copilot (RAG)
 
 **Course:** IPHS 391  
-**Student:** Pedro Perez  
+**Student:** Eliezer Gonzalez  
 **Date:** November 16, 2025  
 
 ---
